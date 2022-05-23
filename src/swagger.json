@@ -1,0 +1,332 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "desafio",
+    "description": "Desafio 2 introdução ao SOLID",
+    "version": "1.0.0",
+    "contact": {
+      "email": "example@example.com"
+    }
+  },
+  "components": {
+    "schemas": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "admin": {
+            "type": "boolean"
+          },
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string"
+          },
+          "updated_at": {
+            "type": "string"
+          }
+        }
+      },
+      "UserArray": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "admin": {
+              "type": "boolean"
+            },
+            "id": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "email": {
+              "type": "string"
+            },
+            "created_at": {
+              "type": "string"
+            },
+            "updated_at": {
+              "type": "string"
+            }
+          },
+          "example": {
+            "id": "1c747ce1-e6f7-4e32-864d-2ed04ee4f43b",
+            "created_at": "2021-04-29T02:30:17.125Z",
+            "updated_at": "2021-04-29T02:30:17.125Z",
+            "admin": false,
+            "name": "Jhon Doe",
+            "email": "jhondoe@example.com"
+          }
+        }
+      }
+    },
+    "examples": {
+      "userExample": {
+        "value": {
+          "id": "1c747ce1-e6f7-4e32-864d-2ed04ee4f43b",
+          "created_at": "2021-04-29T02:30:17.125Z",
+          "updated_at": "2021-04-29T02:30:17.125Z",
+          "admin": false,
+          "name": "Jhon Doe",
+          "email": "jhondoe@example.com"
+        }
+      },
+      "adminExample": {
+        "value": {
+          "id": "1c747ce1-e6f7-4e32-864d-2ed04ee4f43b",
+          "created_at": "2021-04-29T02:30:17.125Z",
+          "updated_at": "2021-04-29T02:30:17.125Z",
+          "admin": true,
+          "name": "Mary Jane",
+          "email": "maryjane@example.com"
+        }
+      }
+    }
+  },
+  "paths": {
+    "/users": {
+      "post": {
+        "tags": ["Users"],
+        "summary": "Create users",
+        "description": "Route used to create non-admin users.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                },
+                "example": {
+                  "email": "example@example.com",
+                  "name": "ExampleName"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/User" },
+                "examples": {
+                  "userExample": {
+                    "$ref": "#/components/examples/userExample"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "This email is already in use.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "error": "This email is already in use."
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": ["Users"],
+        "summary": "Show all Users Profiles",
+        "description": "Show all users profiles using admin privileges.",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "header",
+            "description": "Required id of Admin User",
+            "required": true,
+            "explode": true,
+            "schema": {
+              "type": "string",
+              "example": "1c747ce1-e6f7-4e32-864d-2ed04ee4f43b"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UserArray" }
+              }
+            }
+          },
+          "404": {
+            "description": "User does not exists or isnt admin.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": { "error": "User does not exist or isnt admin." }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{user_id}/admin": {
+      "patch": {
+        "tags": ["Users"],
+        "summary": "Turn admin",
+        "description": "Turn a normal user an admin.",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "description": "Required id of User",
+            "required": true,
+            "explode": true,
+            "schema": {
+              "type": "string",
+              "example": "1c747ce1-e6f7-4e32-864d-2ed04ee4f43b"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "admin": {
+                      "type": "boolean"
+                    },
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "email": {
+                      "type": "string"
+                    },
+                    "created_at": {
+                      "type": "string"
+                    },
+                    "updated_at": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "id": "1c747ce1-e6f7-4e32-864d-2ed04ee4f43b",
+                  "created_at": "2021-04-29T02:30:17.125Z",
+                  "updated_at": "2021-04-29T02:30:17.125Z",
+                  "admin": true,
+                  "name": "Jhon Doe",
+                  "email": "jhondoe@example.com"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User does not exist.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "error": "User does not exist."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{user_id}": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Show user profile",
+        "description": "Show user profile by id.",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "description": "Required id of User",
+            "required": true,
+            "explode": true,
+            "schema": {
+              "type": "string",
+              "example": "1c747ce1-e6f7-4e32-864d-2ed04ee4f43b"
+            }
+          }
+        ],
+        "responses": {
+          "200":{
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/User" },
+                "examples": {
+                  "userExample": {
+                    "$ref": "#/components/examples/userExample"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User does not exist.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "error": "User does not exist."
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
